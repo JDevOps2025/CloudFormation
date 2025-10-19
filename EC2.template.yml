@@ -93,7 +93,8 @@ Resources:
       InstanceType: t3.micro
       ImageId: ami-052064a798f08f0d3
       SubnetId: !Ref MySubnet
-      SecurityGroupIds: !Ref MySecurityGroup
+      SecurityGroupIds: 
+        [!Ref MySecurityGroup]
       Tags:
         - Key: Name
           Value: MyEC2Instance
