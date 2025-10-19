@@ -58,11 +58,9 @@ Resources:
     Type: AWS::EC2::Route
     DependsOn: AttachGateway
     Properties:
-      RouteTableId:
-        Fn::Ref MyRouteTable
+      RouteTableId: !Ref MyRouteTable
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId:
-        Fn::Ref MyInternetGateway
+      GatewayId: !Ref MyInternetGateway
 
   # Associate the subnet with the route table
   SubnetRouteTableAssociation:
@@ -95,10 +93,8 @@ Resources:
     Properties:
       InstanceType: t3.micro
       ImageId: ami-052064a798f08f0d3
-      SubnetId:
-        Fn::Ref MySubnet
-      SecurityGroupIds:
-        - Fn::Ref MySecurityGroup
+      SubnetId: !Ref MySubnet
+      SecurityGroupIds: !Ref MySecurityGroup
       Tags:
         - Key: Name
           Value: MyEC2Instance
@@ -107,5 +103,4 @@ Resources:
 Outputs:
   InstanceId:
     Description: EC2 Instance ID
-    Value:
-      Fn::Ref MyEC2Instance
+    Value: !Ref MyEC2Instance
