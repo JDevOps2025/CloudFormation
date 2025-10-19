@@ -10,3 +10,15 @@ Resources:
         Value: Demo1
       - Key: CostCenter
         Value: Eng
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+        CidrBlock: String
+        EnableDnsHostnames: Boolean
+        EnableDnsSupport: Boolean
+        InstanceTenancy: String
+        Ipv4IpamPoolId: String
+        Ipv4NetmaskLength: Integer
+        Tags: 
+          - Tag
