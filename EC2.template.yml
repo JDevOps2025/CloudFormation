@@ -47,8 +47,7 @@ Resources:
   MyRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId:
-        Fn::Ref MyVPC
+      VpcId: !Ref MyVPC
       Tags:
         - Key: Name
           Value: MyRouteTable
