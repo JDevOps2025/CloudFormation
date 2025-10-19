@@ -3,7 +3,7 @@ Description: Create a VPC and launch an EC2 instance
 
 Resources:
   # Create a Virtual Private Cloud (VPC) with a CIDR block
-  VPC:
+  MyVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
@@ -11,16 +11,15 @@ Resources:
       EnableDnsSupport: true # no required
       Tags:
         - Key: Name
-          Value: VPC
+          Value: MyVPC
 
   # Create a public subnet within the VPC
   MySubnet:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId:
-        Fn::Ref VPC
+        Fn::Ref MyVPC
       CidrBlock: 10.0.1.0/24
-      MapPublicIpOnLaunch: true
       # Assigning the availability zone
       AvailabilityZone:
         Fn::Select:
@@ -42,14 +41,13 @@ Resources:
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: Fn::Ref VPC
-      InternetGatewayId: Fn::Ref MyInternetGateway
+      VpcId: Fn::Ref MyVPC
 
   # Create a Route Table for the VPC
   MyRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: Fn::Ref VPC
+      VpcId: Fn::Ref MyVPC
       Tags:
         - Key: Name
           Value: MyRouteTable
@@ -75,7 +73,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow SSH access
-      VpcId: Fn::Ref VPC
+      VpcId: Fn::Ref MyVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
