@@ -68,10 +68,8 @@ Resources:
   SubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-        Fn::Ref MySubnet
-      RouteTableId:
-        Fn::Ref MyRouteTable
+      SubnetId: !Ref MySubnet
+      RouteTableId: !Ref MyRouteTable
 
   # Create a Security Group to allow SSH access
   MySecurityGroup:
