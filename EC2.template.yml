@@ -42,6 +42,7 @@ Resources:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: Fn::Ref MyVPC
+      InternetGatewayId: Fn::Ref MyInternetGateway
 
   # Create a Route Table for the VPC
   MyRouteTable:
