@@ -17,14 +17,13 @@ Resources:
   MySubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Fn::Ref MyVPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.1.0/24
       # Assigning the availability zone
       AvailabilityZone:
         Fn::Select:
           - 0
-          - Fn::GetAZs: Fn::Ref 'AWS::Region'
+          - Fn::GetAZs: !Ref AWS::Region
       Tags:
         - Key: Name
           Value: MySubnet
@@ -41,14 +40,15 @@ Resources:
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: Fn::Ref MyVPC
-      InternetGatewayId: Fn::Ref MyInternetGateway
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref MyInternetGateway
 
   # Create a Route Table for the VPC
   MyRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: Fn::Ref MyVPC
+      VpcId:
+        Fn::Ref MyVPC
       Tags:
         - Key: Name
           Value: MyRouteTable
@@ -58,33 +58,34 @@ Resources:
     Type: AWS::EC2::Route
     DependsOn: AttachGateway
     Properties:
-      RouteTableId: Fn::Ref MyRouteTable
+      RouteTableId:
+        Fn::Ref MyRouteTable
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: Fn::Ref MyInternetGateway
+      GatewayId:
+        Fn::Ref MyInternetGateway
 
   # Associate the subnet with the route table
   SubnetRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: Fn::Ref MySubnet
-      RouteTableId: Fn::Ref MyRouteTable
+      SubnetId:
+        Fn::Ref MySubnet
+      RouteTableId:
+        Fn::Ref MyRouteTable
 
   # Create a Security Group to allow SSH access
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: Inbound/Outbound
-      GroupDescription: Allow http to client host
-      VpcId: Fn::Ref MyVPC
+      GroupDescription: Allow http to client host (In/Out)
+      VpcId: !Ref MyVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
+        - IpProtocol: -1
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
@@ -94,9 +95,10 @@ Resources:
   MyEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t2.micro
-      ImageId: ami-03c4f11b50838ab5d
-      SubnetId: Fn::Ref MySubnet
+      InstanceType: t3.micro
+      ImageId: ami-052064a798f08f0d3
+      SubnetId:
+        Fn::Ref MySubnet
       SecurityGroupIds:
         - Fn::Ref MySecurityGroup
       Tags:
@@ -107,4 +109,5 @@ Resources:
 Outputs:
   InstanceId:
     Description: EC2 Instance ID
-    Value: Fn::Ref MyEC2Instance
+    Value:
+      Fn::Ref MyEC2Instance
