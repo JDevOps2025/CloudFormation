@@ -37,7 +37,7 @@ Resources:
       FunctionName:
         Ref: LambdaFuncName
       Handler: index.handler
-      Runtime: nodejs12.x
+      Runtime: nodejs22.x
       Role: !GetAtt IAMRole.Arn
     DependsOn:
       - DynamoDBTable
