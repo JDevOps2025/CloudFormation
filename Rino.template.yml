@@ -2,7 +2,8 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: REST API using AWS API Gateway with a Lambda function to get IP
 ###
 ###   Template pulled from ATU Lab Part A: Long question
-###   https://rino-dev.com/build-and-deploy-rest-api-on-aws
+###   URL: https://rino-dev.com/build-and-deploy-rest-api-on-aws
+###   Author: Rino Dugonjić
 ###
 
 Resources:

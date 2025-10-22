@@ -2,7 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Create a VPC/Subnet and deploy EC2 instance exposed to internet
 ###
 ###   Template built from AWS CloudFormation documentation
-###
+###   Author: Jesús Acuña
+###   ATU Student: L00196546
 ###
 
 Resources:
