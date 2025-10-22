@@ -1,5 +1,9 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create a API with request validator enable and POST and GET method.
+###
+###   Template pulled from AWS CloudFormation documentation
+###   https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-validation-sample-cloudformation.html
+###
 
 Parameters:
   StageName:

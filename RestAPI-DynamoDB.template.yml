@@ -1,5 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Lambda function with DynamoDB to write in table.
+###
+###   Template found in YouTube tutorial: AWS CloudFormation, API Gateway, Lambda & Dynamo DB. Rest API Implementation Ready to use Automation
+###   URL: https://www.youtube.com/watch?v=jBD5u80dCQg&list=WL&index=8
+###   Author: Shankyshama86
+###   GitHub repository: https://github.com/shankysharma86/aws.git
+###
 
 Resources:
   LambdaFunction:

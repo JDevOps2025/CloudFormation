@@ -1,5 +1,9 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create a VPC/Subnet and deploy EC2 instance exposed to internet
+###
+###   Template built from AWS CloudFormation documentation
+###
+###
 
 Resources:
   # Create a Virtual Private Cloud (VPC) with a CIDR block
