@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Create a VPC/Subnet and deploy EC2 instance exposed to internet
 ###
 ###   Template built from AWS CloudFormation documentation
