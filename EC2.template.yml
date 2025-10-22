@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Create a VPC and launch an EC2 instance
+Description: Create a VPC/Subnet and deploy EC2 instance exposed to internet
 
 Resources:
   # Create a Virtual Private Cloud (VPC) with a CIDR block
@@ -93,8 +93,7 @@ Resources:
       InstanceType: t3.micro
       ImageId: ami-052064a798f08f0d3
       SubnetId: !Ref MySubnet
-      SecurityGroupIds: 
-        [!Ref MySecurityGroup]
+      SecurityGroupIds: [!Ref MySecurityGroup]
       Tags:
         - Key: Name
           Value: MyEC2Instance

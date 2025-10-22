@@ -1,4 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
+Description: Lambda function with DynamoDB to write in table.
+
 Resources:
   LambdaFunction:
     Type: "AWS::Lambda::Function"

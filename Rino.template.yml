@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
-Description: REST API using AWS API Gateway with a Lambda Integration
+Description: REST API using AWS API Gateway with a Lambda function to get IP
 
 Resources:
   SimpleRestAPI:

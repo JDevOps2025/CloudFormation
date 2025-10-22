@@ -1,4 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
+Description: Create a API with request validator enable and POST and GET method.
+
 Parameters:
   StageName:
     Type: String
