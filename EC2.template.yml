@@ -1,13 +1,18 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Version: 1.2
-Description: >
-  Improving AWS infrastructure: Multi-AZ env with private/public subnets, NAT Gateway, Auto Scaling Group, Load Balancer, and security enhancements.
-  Scalability, Reliability, and Maintainability.
 ###
 ###   Template built from AWS CloudFormation documentation
 ###   Author: Jesús Acuña
 ###   ATU Student: L00196546
 ###
+
+AWSTemplateFormatVersion: "2010-09-09"
+Version: 1
+Description: >
+  Improving AWS infrastructure: Multi-AZ env with private/public subnets, NAT Gateway, Auto Scaling Group, Load Balancer, and security enhancements.
+  Scalability, Reliability, and Maintainability.
+
+# ------------------------------
+# RESOURCES SECTION
+# ------------------------------
 
 Resources:
   # Create a Virtual Private Cloud (VPC) with a CIDR block
@@ -124,11 +129,36 @@ Resources:
         - Key: Name
           Value: MyNATGateway
 
-  # Create a Security Group to allow SSH access
+  # Private route table for NATGateway
+  MyPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTable
+
+  # Private route
+  MyPrivateRoute:
+    Type: AWS::EC2::Route
+    DependsOn: MyNATGateway
+    Properties:
+      RouteTableId: !Ref MyPrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref MyNATGateway
+
+  # Private route table association
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MyPrivateSubnet
+      RouteTableId: !Ref MyPrivateRouteTable
+
+  # Create a Security Group to allow HTTP
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow http to client host (In/Out)
+      GroupDescription: Allow HTTP to client host (In/Out)
       VpcId: !Ref MyVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -166,6 +196,64 @@ Resources:
       Tags:
         - Key: Name
           Value: MyEC2Instance2
+
+# Create auto scaling group
+MyAutoScalingGroup:
+  Type: AWS::AutoScaling::AutoScalingGroup
+  Properties:
+    VPCZoneIdentifier:
+      - !Ref MyPrivateSubnet
+    LaunchTemplate:
+      LaunchTemplateId: !Ref MyLaunchTemplate
+      Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+    MinSize: 1
+    MaxSize: 3
+    DesiredCapacity: 2
+    Tags:
+      - Key: Name
+        Value: ScalableEC2Instances
+        PropagateAtLaunch: true
+
+# Create low balancer
+MyLoadBalancer:
+  Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  Properties:
+    Subnets:
+      - !Ref MySubnet1
+      - !Ref MySubnet2
+    SecurityGroups:
+      - !Ref MySecurityGroup
+    Scheme: internet-facing
+    Tags:
+      - Key: Name
+        Value: ApplicationLoadBalancer
+
+# Create target group for auto scaling group to elastic low balancer
+MyTargetGroup:
+  Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  Properties:
+    VpcId: !Ref MyVPC
+    Port: 80
+    Protocol: HTTP
+    TargetType: instance
+    Tags:
+      - Key: Name
+        Value: MyTargetGroup
+
+# Listener from auto elastic low balancer to auto scaling group
+MyLoadBalancerListener:
+  Type: AWS::ElasticLoadBalancingV2::Listener
+  Properties:
+    DefaultActions:
+      - Type: forward
+        TargetGroupArn: !Ref MyTargetGroup
+    LoadBalancerArn: !Ref MyLoadBalancer
+    Port: 80
+    Protocol: HTTP
+
+# ------------------------------
+# OUTPUTS SECTION
+# ------------------------------
 
 ### Create each EC1 instance output
 # Output the EC2 instance ID after deployment
