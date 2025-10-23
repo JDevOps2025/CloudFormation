@@ -5,7 +5,6 @@
 ###
 
 AWSTemplateFormatVersion: "2010-09-09"
-Version: 1
 Description: >
   Improving AWS infrastructure: Multi-AZ env with private/public subnets, NAT Gateway, Auto Scaling Group, Load Balancer, and security enhancements.
   Scalability, Reliability, and Maintainability.
@@ -243,19 +242,3 @@ Resources:
       LoadBalancerArn: !Ref MyLoadBalancer
       Port: 80
       Protocol: HTTP
-
-# ------------------------------
-# OUTPUTS SECTION
-# ------------------------------
-
-### Create each EC1 instance output
-# Output the EC2 instance ID after deployment
-# Instance1
-Outputs:
-  InstanceId1:
-    Description: EC2 Instance ID in Subnet 1
-    Value: !Ref MyEC2Instance1
-  #Instance2
-  InstanceId2:
-    Description: EC2 Instance ID in Subnet 2
-    Value: !Ref MyEC2Instance2
