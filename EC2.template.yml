@@ -1,5 +1,8 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Create a VPC/Subnet and deploy EC2 instance exposed to internet
+Version: 1.2
+Description: >
+  Improving AWS infrastructure: Multi-AZ env with private/public subnets, NAT Gateway, Auto Scaling Group, Load Balancer, and security enhancements.
+  Scalability, Reliability, and Maintainability.
 ###
 ###   Template built from AWS CloudFormation documentation
 ###   Author: Jesús Acuña
@@ -12,7 +15,7 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
-      EnableDnsHostnames: true # no required
+      EnableDnsHostnames: true # Enables DNS for hostnames
       EnableDnsSupport: true # no required
       Tags:
         - Key: Name
