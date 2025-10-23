@@ -25,13 +25,12 @@ Resources:
       VpcId: !Ref MyVPC
       CidrBlock: 10.0.1.0/24
       # Assigning the availability zone
-      AvailabilityZone:
-        Fn::Select: !Select [0 , !GetAZs ""]
+      AvailabilityZone: !Select [0, !GetAZs ""]
       Tags:
         - Key: Name
           Value: MySubnet1
 
-### Create another Subnet to be deployed in a different availability zone
+  ### Create another Subnet to be deployed in a different availability zone
   # Create a public subnet within the VPC
   MySubnet2:
     Type: AWS::EC2::Subnet
@@ -39,12 +38,10 @@ Resources:
       VpcId: !Ref MyVPC
       CidrBlock: 10.0.2.0/24
       # Assigning the availability zone
-      AvailabilityZone:
-        Fn::Select: !Select [0 , !GetAZs ""]
+      AvailabilityZone: !Select [1, !GetAZs ""]
       Tags:
         - Key: Name
           Value: MySubnet2
-
 
   # Create an Internet Gateway to allow internet access
   MyInternetGateway:
@@ -79,7 +76,7 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref MyInternetGateway
 
-### Associate each subnet with the respective route table
+  ### Associate each subnet with the respective route table
   # Associate the subnet1 with the route table
   Subnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -112,7 +109,7 @@ Resources:
         - Key: Name
           Value: MySecurityGroup
 
-### Create EC2 instance to deploy in each availability zone
+  ### Create EC2 instance to deploy in each availability zone
   # Launch an EC2 instance in the subnet with the security group
   MyEC2Instance1:
     Type: AWS::EC2::Instance
@@ -141,10 +138,10 @@ Resources:
 # Output the EC2 instance ID after deployment
 # Instance1
 Outputs:
-  InstanceId:
+  InstanceId1:
     Description: EC2 Instance ID in Subnet 1
     Value: !Ref MyEC2Instance1
-#Instance2
-  InstanceId:
+  #Instance2
+  InstanceId2:
     Description: EC2 Instance ID in Subnet 2
     Value: !Ref MyEC2Instance2
