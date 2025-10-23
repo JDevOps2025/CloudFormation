@@ -10,6 +10,13 @@ Description: >
   Improving AWS infrastructure: Multi-AZ env with private/public subnets, NAT Gateway, Auto Scaling Group, Load Balancer, and security enhancements.
   Scalability, Reliability, and Maintainability.
 
+Mappings: # Mapping of AMIs per region for flexibility
+  RegionMap:
+    eu-west-1:
+      AMI: ami-052064a798f08f0d3
+    us-east-1:
+      AMI: ami-000cd1b17e4e62251
+
 # ------------------------------
 # RESOURCES SECTION
 # ------------------------------
@@ -172,84 +179,70 @@ Resources:
         - Key: Name
           Value: MySecurityGroup
 
-  ### Create EC2 instance to deploy in each availability zone
-  # Launch an EC2 instance in the subnet with the security group
-  MyEC2Instance1:
-    Type: AWS::EC2::Instance
+  ### Create EC2 instance to deploy in each availability zone using mapping and template
+  # Launch template for reuse EC2
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
     Properties:
-      InstanceType: t3.micro
-      ImageId: ami-052064a798f08f0d3
-      SubnetId: !Ref MySubnet1
-      SecurityGroupIds: [!Ref MySecurityGroup]
+      LaunchTemplateData:
+        ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", AMI]
+        InstanceType: t3.micro
+        SecurityGroupIds:
+          - !Ref MySecurityGroup
+
+  # Create auto scaling group
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref MyPrivateSubnet
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      MinSize: 1
+      MaxSize: 3
+      DesiredCapacity: 2
       Tags:
         - Key: Name
-          Value: MyEC2Instance1
+          Value: ScalableEC2Instances
+          PropagateAtLaunch: true
 
-  # Launch an EC2 instance in the subnet with the security group
-  MyEC2Instance2:
-    Type: AWS::EC2::Instance
+  # Create low balancer
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      InstanceType: t3.micro
-      ImageId: ami-052064a798f08f0d3
-      SubnetId: !Ref MySubnet2
-      SecurityGroupIds: [!Ref MySecurityGroup]
+      Subnets:
+        - !Ref MySubnet1
+        - !Ref MySubnet2
+      SecurityGroups:
+        - !Ref MySecurityGroup
+      Scheme: internet-facing
       Tags:
         - Key: Name
-          Value: MyEC2Instance2
+          Value: ApplicationLoadBalancer
 
-# Create auto scaling group
-MyAutoScalingGroup:
-  Type: AWS::AutoScaling::AutoScalingGroup
-  Properties:
-    VPCZoneIdentifier:
-      - !Ref MyPrivateSubnet
-    LaunchTemplate:
-      LaunchTemplateId: !Ref MyLaunchTemplate
-      Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
-    MinSize: 1
-    MaxSize: 3
-    DesiredCapacity: 2
-    Tags:
-      - Key: Name
-        Value: ScalableEC2Instances
-        PropagateAtLaunch: true
+  # Create target group for auto scaling group to elastic low balancer
+  MyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref MyVPC
+      Port: 80
+      Protocol: HTTP
+      TargetType: instance
+      Tags:
+        - Key: Name
+          Value: MyTargetGroup
 
-# Create low balancer
-MyLoadBalancer:
-  Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-  Properties:
-    Subnets:
-      - !Ref MySubnet1
-      - !Ref MySubnet2
-    SecurityGroups:
-      - !Ref MySecurityGroup
-    Scheme: internet-facing
-    Tags:
-      - Key: Name
-        Value: ApplicationLoadBalancer
-
-# Create target group for auto scaling group to elastic low balancer
-MyTargetGroup:
-  Type: AWS::ElasticLoadBalancingV2::TargetGroup
-  Properties:
-    VpcId: !Ref MyVPC
-    Port: 80
-    Protocol: HTTP
-    TargetType: instance
-    Tags:
-      - Key: Name
-        Value: MyTargetGroup
-
-# Listener from auto elastic low balancer to auto scaling group
-MyLoadBalancerListener:
-  Type: AWS::ElasticLoadBalancingV2::Listener
-  Properties:
-    DefaultActions:
-      - Type: forward
-        TargetGroupArn: !Ref MyTargetGroup
-    LoadBalancerArn: !Ref MyLoadBalancer
-    Port: 80
-    Protocol: HTTP
+  # Listener from auto elastic low balancer to auto scaling group
+  MyLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MyTargetGroup
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Port: 80
+      Protocol: HTTP
 
 # ------------------------------
 # OUTPUTS SECTION
