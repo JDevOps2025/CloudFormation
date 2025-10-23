@@ -48,6 +48,18 @@ Resources:
         - Key: Name
           Value: MySubnet2
 
+  # Create a private subnet for auto-scaling
+  MyPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      MapPublicIpOnLaunch: false # No public IPs
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet
+
   # Create an Internet Gateway to allow internet access
   MyInternetGateway:
     Type: AWS::EC2::InternetGateway
