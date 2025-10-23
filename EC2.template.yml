@@ -16,32 +16,34 @@ Resources:
     Properties:
       CidrBlock: 10.0.0.0/16
       EnableDnsHostnames: true # Enables DNS for hostnames
-      EnableDnsSupport: true # no required
+      EnableDnsSupport: true # Enables DNS resolution
       Tags:
         - Key: Name
           Value: MyVPC
 
-  # Create a public subnet within the VPC
+  ### Create subnets to be deployed in a different availability zone
+  # Create a public subnet1
   MySubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: 10.0.1.0/24
       # Assigning the availability zone
-      AvailabilityZone: !Select [0, !GetAZs ""]
+      AvailabilityZone: !Select [0, !GetAZs ""] # First AZ
+      MapPublicIpOnLaunch: true # Auto-assign public IPS
       Tags:
         - Key: Name
           Value: MySubnet1
 
-  ### Create another Subnet to be deployed in a different availability zone
-  # Create a public subnet within the VPC
+  # Create a public subnet2
   MySubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: 10.0.2.0/24
       # Assigning the availability zone
-      AvailabilityZone: !Select [1, !GetAZs ""]
+      AvailabilityZone: !Select [1, !GetAZs ""] # Second AZ
+      MapPublicIpOnLaunch: true # Auto-assign public IPS
       Tags:
         - Key: Name
           Value: MySubnet2
