@@ -108,6 +108,22 @@ Resources:
       SubnetId: !Ref MySubnet2
       RouteTableId: !Ref MyRouteTable
 
+  # Create an Elastic IP and NAT Gateway
+  MyNATGatewayEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  MyNATGateway:
+    Type: AWS::EC2::NatGateway
+    DependsOn: AttachGateway
+    Properties:
+      SubnetId: !Ref MySubnet1
+      AllocationId: !GetAtt MyNATGatewayEIP.AllocationId
+      Tags:
+        - Key: Name
+          Value: MyNATGateway
+
   # Create a Security Group to allow SSH access
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
