@@ -139,13 +139,12 @@ Resources:
 
 ### Create each EC1 instance output
 # Output the EC2 instance ID after deployment
+# Instance1
 Outputs:
   InstanceId:
     Description: EC2 Instance ID in Subnet 1
     Value: !Ref MyEC2Instance1
-
-# Output the EC2 instance ID after deployment
-Outputs:
+#Instance2
   InstanceId:
     Description: EC2 Instance ID in Subnet 2
     Value: !Ref MyEC2Instance2
